@@ -58,7 +58,13 @@ export default function SignupPage() {
     setIsLoading(false)
 
     if (result.success) {
+      // Trigger auth change event
+      window.dispatchEvent(new Event("auth-change"))
+      
       router.push("/")
+      
+      // Force refresh to update header
+      router.refresh()
     } else {
       setError(result.error || "Registration failed")
     }

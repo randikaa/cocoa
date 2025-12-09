@@ -31,12 +31,18 @@ export default function LoginPage() {
     setIsLoading(false)
 
     if (result.success) {
+      // Trigger auth change event
+      window.dispatchEvent(new Event("auth-change"))
+      
       // Redirect based on role
       if (result.user?.role === "admin") {
         router.push("/admin")
       } else {
         router.push("/")
       }
+      
+      // Force refresh to update header
+      router.refresh()
     } else {
       setError(result.error || "Login failed")
     }

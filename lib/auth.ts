@@ -57,11 +57,15 @@ export function getStoredAuth(): AuthState {
 export function setStoredAuth(state: AuthState): void {
   if (typeof window === "undefined") return
   localStorage.setItem("cocoa_auth", JSON.stringify(state))
+  // Dispatch custom event to notify components of auth change
+  window.dispatchEvent(new Event("auth-change"))
 }
 
 export function clearStoredAuth(): void {
   if (typeof window === "undefined") return
   localStorage.removeItem("cocoa_auth")
+  // Dispatch custom event to notify components of auth change
+  window.dispatchEvent(new Event("auth-change"))
 }
 
 export function loginUser(email: string, password: string): { success: boolean; user?: User; error?: string } {

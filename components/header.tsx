@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { getStoredAuth, logoutUser, type User } from "@/lib/auth"
-import { Search, Heart, ShoppingBag, Menu, X, UserIcon, LogOut, Settings, ShieldCheck } from "lucide-react"
+import { Search, Heart, ShoppingBag, Menu, X, UserIcon, LogOut, ShieldCheck } from "lucide-react"
 
 const navItems = [
   { name: "Shop", href: "/shop" },
@@ -36,20 +36,40 @@ export function Header() {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10)
     }
+    
+    const updateAuthState = () => {
+      const auth = getStoredAuth()
+      setUser(auth.user)
+    }
+
+    // Initial auth check
+    updateAuthState()
+
+    // Listen for scroll
     window.addEventListener("scroll", handleScroll)
+    
+    // Listen for auth changes
+    window.addEventListener("auth-change", updateAuthState)
+    window.addEventListener("storage", updateAuthState)
 
-    // Check auth state
-    const auth = getStoredAuth()
-    setUser(auth.user)
-
-    return () => window.removeEventListener("scroll", handleScroll)
+    return () => {
+      window.removeEventListener("scroll", handleScroll)
+      window.removeEventListener("auth-change", updateAuthState)
+      window.removeEventListener("storage", updateAuthState)
+    }
   }, [])
 
   const handleLogout = () => {
+    console.log("Logging out...")
     logoutUser()
     setUser(null)
     router.push("/")
   }
+
+  // Debug: Log user state
+  useEffect(() => {
+    console.log("Current user:", user)
+  }, [user])
 
   return (
     <header
@@ -203,56 +223,49 @@ export function Header() {
             {/* Account - Desktop */}
             <div className="hidden sm:block">
               {user ? (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
+                user.role === "admin" ? (
+                  <DropdownMenu modal={false}>
+                    <DropdownMenuTrigger asChild>
+                      <button className="flex items-center justify-center w-10 h-10 rounded-full hover:opacity-80 transition-opacity">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-sm font-medium">
+                          {user.name.charAt(0)}
+                        </div>
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56" sideOffset={8}>
+                      <div className="px-2 py-1.5">
+                        <p className="text-sm font-medium text-foreground">{user.name}</p>
+                        <p className="text-xs text-muted-foreground">{user.email}</p>
+                        <p className="text-xs text-primary font-medium mt-1">Admin</p>
+                      </div>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem 
+                        onClick={() => router.push("/admin")}
+                        className="cursor-pointer"
+                      >
+                        <ShieldCheck className="h-4 w-4 mr-2" />
+                        <span>Admin Dashboard</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem 
+                        onClick={handleLogout} 
+                        className="cursor-pointer"
+                        variant="destructive"
+                      >
+                        <LogOut className="h-4 w-4 mr-2" />
+                        <span>Logout</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : (
+                  <Link href="/account">
                     <Button variant="ghost" size="icon" className="text-foreground">
                       <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-sm font-medium">
                         {user.name.charAt(0)}
                       </div>
                     </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56 bg-card border-border">
-                    <div className="px-2 py-1.5">
-                      <p className="text-sm font-medium text-foreground">{user.name}</p>
-                      <p className="text-xs text-muted-foreground">{user.email}</p>
-                    </div>
-                    <DropdownMenuSeparator className="bg-border" />
-                    {user.role === "admin" && (
-                      <>
-                        <DropdownMenuItem asChild>
-                          <Link href="/admin" className="flex items-center gap-2">
-                            <ShieldCheck className="h-4 w-4" />
-                            Admin Panel
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator className="bg-border" />
-                      </>
-                    )}
-                    <DropdownMenuItem asChild>
-                      <Link href="/account" className="flex items-center gap-2">
-                        <UserIcon className="h-4 w-4" />
-                        My Account
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href="/account/orders" className="flex items-center gap-2">
-                        <ShoppingBag className="h-4 w-4" />
-                        My Orders
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href="/account/settings" className="flex items-center gap-2">
-                        <Settings className="h-4 w-4" />
-                        Settings
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator className="bg-border" />
-                    <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive">
-                      <LogOut className="h-4 w-4 mr-2" />
-                      Sign Out
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                  </Link>
+                )
               ) : (
                 <Link href="/login">
                   <Button variant="ghost" size="icon" className="text-foreground">
