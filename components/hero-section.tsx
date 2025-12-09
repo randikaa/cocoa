@@ -18,7 +18,7 @@ export function HeroSection() {
       {/* Background */}
       <div className="absolute inset-0 bg-background">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/10 via-background to-background" />
-        <div className="absolute inset-0 bg-[url('https://s6.imgcdn.dev/YTV8DL.jpg')] opacity-5 bg-cover bg-center" />
+        <div className="absolute inset-0 bg-[url('https://s6.imgcdn.dev/YTtOwl.jpg')] opacity-5 bg-cover bg-center" />
       </div>
 
       {/* Animated gradient orbs */}
@@ -99,7 +99,7 @@ export function HeroSection() {
           >
             <div className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-card">
               <img
-                src="https://s6.imgcdn.dev/YTV8DL.jpg"
+                src="https://s6.imgcdn.dev/YTtOwl.jpg"
                 alt="Model wearing cocoa streetwear"
                 className="w-full h-full object-cover"
               />
