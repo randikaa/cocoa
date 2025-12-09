@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, use } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Header } from "@/components/header"
@@ -26,10 +26,9 @@ import {
   Ruler,
 } from "lucide-react"
 
-export default function ProductPage({ params }: { params: Promise<{ id: string }> }) {
-  const resolvedParams = use(params)
+export default function ProductPage({ params }: { params: { id: string } }) {
   const router = useRouter()
-  const product = products.find((p) => p.id === resolvedParams.id)
+  const product = products.find((p) => p.id === params.id)
 
   const [selectedSize, setSelectedSize] = useState<string>("")
   const [selectedColor, setSelectedColor] = useState<string>("")

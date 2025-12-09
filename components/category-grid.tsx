@@ -24,17 +24,17 @@ export function CategoryGrid() {
         </div>
 
         {/* Category Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {categories.slice(0, 6).map((category, index) => (
             <Link
               key={category.id}
               href={`/shop?category=${category.slug}`}
               className={`group relative overflow-hidden rounded-xl bg-card stagger-animation stagger-${index + 1} ${
-                index === 0 ? "col-span-2 lg:col-span-1 lg:row-span-2" : ""
+                index === 0 ? "col-span-2 row-span-2" : ""
               }`}
             >
               <div
-                className={`relative ${index === 0 ? "aspect-[4/5] lg:aspect-[3/4]" : "aspect-square sm:aspect-[4/5]"}`}
+                className={`relative ${index === 0 ? "aspect-[4/5]" : "aspect-square sm:aspect-[4/5]"}`}
               >
                 <img
                   src={category.image || "/placeholder.svg"}
